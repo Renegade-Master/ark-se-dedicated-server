@@ -7,23 +7,24 @@
 #######################################################################
 
 # Set to `-x` for Debug logging
-set +x
+set +x -eu -o pipefail
 
 # Start the Server
 function start_server() {
-    printf "\n### Starting Generic SteamCMD Server...\n"
-    timeout "$TIMEOUT" "$BASE_GAME_DIR"/start-server.sh \
-        -adminusername "$ADMIN_USERNAME" \
-        -adminpassword "$ADMIN_PASSWORD" \
-        -ip "$BIND_IP" -port "$QUERY_PORT" \
-        -servername "$SERVER_NAME"
+    printf "\n### Starting ARK Survival Evolved Server...\n"
+    timeout "$TIMEOUT" "$BASE_GAME_DIR"/ShooterGame/Binaries/Linux/ShooterGameServer \
+        TheIsland?\
+        listen?\
+        SessionName="$SERVER_NAME"?\
+        ServerPassword="$SERVER_PASSWORD"?\
+        ServerAdminPassword="$ADMIN_PASSWORD"?\
+        Port="$GAME_PORT"?\
+        QueryPort="$QUERY_PORT"?\
+        MaxPlayers="$MAX_PLAYERS"
 }
 
 function apply_postinstall_config() {
     printf "\n### Applying Post Install Configuration...\n"
-
-    # Set the Max Players
-    sed -i "s/MaxPlayers=.*/MaxPlayers=$MAX_PLAYERS/g" "$SERVER_CONFIG"
 
     # Set the maximum amount of RAM for the JVM
     sed -i "s/-Xmx.*/-Xmx$MAX_RAM\",/g" "$SERVER_VM_CONFIG"
@@ -33,15 +34,6 @@ function apply_postinstall_config() {
 
     # Set the Server Publicity status
     sed -i "s/Open=.*/Open=$PUBLIC_SERVER/g" "$SERVER_CONFIG"
-
-    # Set the Server query Port
-    sed -i "s/DefaultPort=.*/DefaultPort=$QUERY_PORT/g" "$SERVER_CONFIG"
-
-    # Set the Server Name
-    sed -i "s/PublicName=.*/PublicName=$SERVER_NAME/g" "$SERVER_CONFIG"
-
-    # Set the Server Password
-    sed -i "s/Password=.*/Password=$SERVER_PASSWORD/g" "$SERVER_CONFIG"
 
     printf "\n### Post Install Configuration applied.\n"
 }
@@ -64,11 +56,11 @@ function test_first_run() {
 
 # Update the server
 function update_server() {
-    printf "\n### Updating Generic SteamCMD Server...\n"
+    printf "\n### Updating ARK Survival Evolved Server...\n"
 
     "$STEAM_PATH" +runscript "$STEAM_INSTALL_FILE"
 
-    printf "\n### Generic SteamCMD Server updated.\n"
+    printf "\n### ARK Survival Evolved Server updated.\n"
 }
 
 # Apply user configuration to the server
@@ -97,20 +89,14 @@ function set_variables() {
 
     TIMEOUT="60"
     STEAM_INSTALL_FILE="/home/steam/install_server.scmd"
-    BASE_GAME_DIR="/home/steam/REPLACE_ME_INSTALL"
-    CONFIG_DIR="/home/steam/REPLACE_ME_CONFIG"
-
-    # Set the Server Admin Password variable
-    ADMIN_USERNAME=${ADMIN_USERNAME:-"admin"}
+    BASE_GAME_DIR="/home/steam/ArkSE_Install"
+    CONFIG_DIR="/home/steam/ArkSE_Config"
 
     # Set the Server Admin Password variable
     ADMIN_PASSWORD=${ADMIN_PASSWORD:-"changeme"}
 
-    # Set the IP address variable
-    BIND_IP=${BIND_IP:-"0.0.0.0"}
-
     # Set the IP Game Port variable
-    GAME_PORT=${GAME_PORT:-"8766"}
+    GAME_PORT=${GAME_PORT:-"7777"}
 
     # Set the game version variable
     GAME_VERSION=${GAME_VERSION:-"public"}
@@ -119,19 +105,16 @@ function set_variables() {
     MAX_PLAYERS=${MAX_PLAYERS:-"16"}
 
     # Set the Maximum RAM variable
-    MAX_RAM=${MAX_RAM:-"4096m"}
+    MAX_RAM=${MAX_RAM:-"6144m"}
 
     # Set the Mods to use from workshop
     MOD_NAMES=${MOD_NAMES:-""}
 
-    # Set the Server Publicity variable
-    PUBLIC_SERVER=${PUBLIC_SERVER:-"true"}
-
     # Set the IP Query Port variable
-    QUERY_PORT=${QUERY_PORT:-"16261"}
+    QUERY_PORT=${QUERY_PORT:-"27015"}
 
     # Set the Server name variable
-    SERVER_NAME=${SERVER_NAME:-"DedicatedServer"}
+    SERVER_NAME=${SERVER_NAME:-"ArkSeServer"}
 
     # Set the Server Password variable
     SERVER_PASSWORD=${SERVER_PASSWORD:-""}

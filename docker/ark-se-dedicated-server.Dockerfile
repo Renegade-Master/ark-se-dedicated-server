@@ -1,7 +1,7 @@
 #######################################################################
 #   Author: Renegade-Master
-#   Description: Base image for running a Generic SteamCMD Dedicated
-#       Server instance.
+#   Description: Base image for running an ARK: Survival Evolved
+#       Dedicated Server instance.
 #   License: GNU General Public License v3.0 (see LICENSE)
 #######################################################################
 
@@ -14,9 +14,9 @@ ARG USER_ID
 ARG GROUP_ID
 
 # Add metadata labels
-LABEL com.renegademaster.steamcmd-dedicated-server-template.authors="Renegade-Master" \
-    com.renegademaster.steamcmd-dedicated-server-template.source-repository="https://github.com/Renegade-Master/steamcmd-dedicated-server-template" \
-    com.renegademaster.steamcmd-dedicated-server-template.image-repository="https://hub.docker.com/renegademaster/steamcmd-dedicated-server-template"
+LABEL com.renegademaster.ark-se-dedicated-server.authors="Renegade-Master" \
+    com.renegademaster.ark-se-dedicated-server.source-repository="https://github.com/Renegade-Master/ark-se-dedicated-server" \
+    com.renegademaster.ark-se-dedicated-server.image-repository="https://hub.docker.com/renegademaster/ark-se-dedicated-server"
 
 # Copy the source files
 COPY src /home/steam/
