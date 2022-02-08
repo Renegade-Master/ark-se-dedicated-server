@@ -1,0 +1,38 @@
+version: "3.6"
+
+services:
+  dedicated-server:
+    build:
+      context: .
+      dockerfile: docker/steamcmd-dedicated-server-template.Dockerfile
+      args:
+        USER_ID: 1000
+        GROUP_ID: 1000
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      - "ADMIN_PASSWORD=changeme"
+      - "ADMIN_USERNAME=superuser"
+      - "AUTOSAVE_INTERVAL=15"
+      - "BIND_IP=0.0.0.0"
+      - "GAME_PORT=8766"
+      - "GAME_VERSION=public"
+      - "MAX_PLAYERS=16"
+      - "MAX_RAM=4096m"
+      - "MOD_NAMES="
+      - "PUBLIC_SERVER=true"
+      - "QUERY_PORT=16261"
+      - "SERVER_NAME=DedicatedServer"
+      - "SERVER_PASSWORD="
+    ports:
+      - target: 8766
+        published: 8766
+        protocol: udp
+      - target: 16261
+        published: 16261
+        protocol: udp
+    volumes:
+      - ./REPLACE_ME_INSTALL:/home/steam/REPLACE_ME_INSTALL
+      - ./REPLACE_ME_CONFIG:/home/steam/REPLACE_ME_CONFIG/
+    cap_drop:
+      - ALL
