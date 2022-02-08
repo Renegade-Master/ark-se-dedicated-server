@@ -58,10 +58,9 @@ jobs:
           --env=GAME_PORT="25496" \
           --env=MAX_PLAYERS="14" \
           --env=MAX_RAM="6144m" \
-          --env=PUBLIC_SERVER="false" \
           --env=SERVER_NAME="GitHubActionTest" \
           --env=SERVER_PASSWORD="github_action_test_password" \
-          ark-se-dedicated-server:${{ steps.variables.outputs.datetime }} \
+          renegademaster/ark-se-dedicated-server:${{ steps.variables.outputs.datetime }} \
           2>&1 | tee ./docker-log.log
 
       - name: Investigate File Structure on Failure

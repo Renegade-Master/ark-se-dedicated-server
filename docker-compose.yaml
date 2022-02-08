@@ -12,7 +12,6 @@ services:
     user: "1000:1000"
     environment:
       - "ADMIN_PASSWORD=changeme"
-      - "AUTOSAVE_INTERVAL=15"
       - "BIND_IP=0.0.0.0"
       - "GAME_PORT=7777"
       - "GAME_PORT_2=7778"
@@ -20,7 +19,6 @@ services:
       - "MAX_PLAYERS=16"
       - "MAX_RAM=6144m"
       - "MOD_NAMES="
-      - "PUBLIC_SERVER=true"
       - "QUERY_PORT=27015"
       - "SERVER_NAME=ArkSeServer"
       - "SERVER_PASSWORD="

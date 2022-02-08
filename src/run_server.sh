@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #######################################################################
 #   Author: Renegade-Master
-#   Description: Install, update, and start a Generic SteamCMD Dedicated
-#     Server instance.
+#   Description: Install, update, and start an ARK: Survival Evolved
+#     Dedicated Server instance.
 #   License: GNU General Public License v3.0 (see LICENSE)
 #######################################################################
 

@@ -35,7 +35,7 @@ Resource links:
 
 ## Instructions
 
-The server can be run using plain Docker, or using Docker-Compose. The end-result is the same, but Docker-Compose is 
+The server can be run using plain Docker, or using Docker-Compose. The end-result is the same, but Docker-Compose is
 recommended.
 
 *Optional arguments table*:
@@ -74,10 +74,10 @@ The following are instructions for running the server using the Docker image.
       docker build -t renegademaster/ark-se-dedicated-server:<tag> -f docker/ark-se-dedicated-server.Dockerfile .
       ```
 
-2. Run the container:  
+2. Run the container:
 
    ***Note**: Arguments inside square brackets are optional. If the default ports are to be overridden, then the
-   `published` ports below must also be changed*  
+   `published` ports below must also be changed*
 
    ```shell
    mkdir ArkSE_Install ArkSE_Config
@@ -89,7 +89,6 @@ The following are instructions for running the server using the Docker image.
        --name ark-se-server \
        --user=$(id -u):$(id -g) \
        [--env=ADMIN_PASSWORD=<value>] \
-       [--env=ADMIN_USERNAME=<value>] \
        [--env=BIND_IP=<value>] \
        [--env=GAME_PORT=<value>] \
        [--env=GAME_PORT_2=<value>] \
@@ -97,7 +96,6 @@ The following are instructions for running the server using the Docker image.
        [--env=MAX_PLAYERS=<value>] \
        [--env=MAX_RAM=<value>] \
        [--env=MOD_NAMES=<value>] \
-       [--env=PUBLIC_SERVER=<value>] \
        [--env=QUERY_PORT=<value>] \
        [--env=SERVER_NAME=<value>] \
        [--env=SERVER_PASSWORD=<value>] \
@@ -118,11 +116,11 @@ The following are instructions for running the server using Docker-Compose.
    ```
 
 2. Make any configuration changes you want to in the `docker-compose.yaml` file. In
-   the `services.ark-se.environment` section, you can change values for the server configuration.
+   the `services.ark-se-server.environment` section, you can change values for the server configuration.
 
    ***Note**: If the default ports are to be overridden, then the `published` ports must also be changed*
 
-3. In the `docker-compose.yaml` file, you must change the `services.ark-se.user` values to match your local user.
+3. In the `docker-compose.yaml` file, you must change the `services.ark-se-server.user` values to match your local user.
    To find your local user and group ids, run the following command:
 
    ```shell
