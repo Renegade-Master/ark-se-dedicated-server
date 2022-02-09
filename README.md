@@ -84,7 +84,7 @@ The following are instructions for running the server using the Docker image.
 
    docker run --detach \
        --mount type=bind,source="$(pwd)/ArkSE_Install",target=/home/steam/ArkSE_Install \
-       --mount type=bind,source="$(pwd)/ArkSE_Config",target=/home/steam/ArkSE_Config \
+       --mount type=bind,source="$(pwd)/ArkSE_Config",target=/home/steam/ArkSE_Install/ShooterGame/Saved \
        --publish 27015:27015/udp --publish 7777:7777/udp --publish 7778:7778/udp \
        --name ark-se-server \
        --user=$(id -u):$(id -g) \

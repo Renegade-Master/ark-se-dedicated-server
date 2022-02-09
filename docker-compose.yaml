@@ -33,7 +33,11 @@ services:
         published: 27015
         protocol: udp
     volumes:
-      - ./ArkSE_Install:/home/steam/ArkSE_Install/
-      - ./ArkSE_Config:/home/steam/ArkSE_Config/
+      - ./ArkSE_Install:/home/steam/ArkSE_Install
+      - ./ArkSE_Config:/home/steam/ArkSE_Install/ShooterGame/Saved
     cap_drop:
       - ALL
+    ulimits:
+      nofile:
+        soft: 1000000
+        hard: 1000000

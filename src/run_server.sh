@@ -12,6 +12,7 @@ set +x -eu -o pipefail
 # Start the Server
 function start_server() {
     printf "\n### Starting ARK Survival Evolved Server...\n"
+
     timeout "$TIMEOUT" "$BASE_GAME_DIR"/ShooterGame/Binaries/Linux/ShooterGameServer \
         TheIsland?\
         listen?\
@@ -26,8 +27,9 @@ function start_server() {
 function apply_postinstall_config() {
     printf "\n### Applying Post Install Configuration...\n"
 
-    # Set the maximum amount of RAM for the JVM
-    sed -i "s/-Xmx.*/-Xmx$MAX_RAM\",/g" "$SERVER_VM_CONFIG"
+    # Remove the repeated key in the config file
+    uniq "$SERVER_CONFIG" > "${SERVER_CONFIG}2"
+    mv "${SERVER_CONFIG}2" "$SERVER_CONFIG"
 
     # Set the Mod names
     sed -i "s/Mods=.*/Mods=$MOD_NAMES/g" "$SERVER_CONFIG"
@@ -90,7 +92,7 @@ function set_variables() {
     TIMEOUT="60"
     STEAM_INSTALL_FILE="/home/steam/install_server.scmd"
     BASE_GAME_DIR="/home/steam/ArkSE_Install"
-    CONFIG_DIR="/home/steam/ArkSE_Config"
+    CONFIG_DIR="/home/steam/ArkSE_Install/ShooterGame/Saved"
 
     # Set the Server Admin Password variable
     ADMIN_PASSWORD=${ADMIN_PASSWORD:-"changeme"}
@@ -119,9 +121,8 @@ function set_variables() {
     # Set the Server Password variable
     SERVER_PASSWORD=${SERVER_PASSWORD:-""}
 
-    SERVER_CONFIG="$CONFIG_DIR/Server/$SERVER_NAME.ini"
-    SERVER_VM_CONFIG="$BASE_GAME_DIR/ProjectZomboid64.json"
-    SERVER_RULES_CONFIG="$CONFIG_DIR/Server/${SERVER_NAME}_SandboxVars.lua"
+    SERVER_CONFIG="$CONFIG_DIR/Config/LinuxServer/GameUserSettings.ini"
+    SERVER_RULES_CONFIG="$CONFIG_DIR/Config/LinuxServer/Game.ini"
 }
 
 ## Main
