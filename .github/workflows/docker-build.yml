@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Maximize build space
-        uses: easimon/maximize-build-space@master
+        uses: easimon/maximize-build-space@v5
         with:
           root-reserve-mb: 1024
           swap-size-mb: 1024
@@ -55,7 +55,7 @@ jobs:
       - name: Test Run the Docker Image
         if: ${{ success() }}
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 60
         run: |
           docker run \
           --rm \
