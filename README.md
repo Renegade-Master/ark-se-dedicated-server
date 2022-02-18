@@ -98,7 +98,7 @@ The following are instructions for running the server using the Docker image.
        renegademaster/ark-se-dedicated-server[:<tagname>]
    ```
 
-4. Once you see `<placeholder_initialisation_text>` in the console, people can start to join the server.
+4. Once you see `Setting breakpad minidump AppID = 346110` in the console, people can start to join the server.
 
 ### Docker-Compose
 
@@ -131,4 +131,4 @@ The following are instructions for running the server using Docker-Compose.
    docker-compose up --build --detach
    ```
 
-6. Once you see `<placeholder_initialisation_text>` in the console, people can start to join the server.
+6. Once you see `Setting breakpad minidump AppID = 346110` in the console, people can start to join the server.

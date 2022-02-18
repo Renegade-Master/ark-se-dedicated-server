@@ -55,7 +55,7 @@ jobs:
       - name: Test Run the Docker Image
         if: ${{ success() }}
         continue-on-error: true
-        timeout-minutes: 22
+        timeout-minutes: 18
         run: |
           docker run \
           --rm \
@@ -74,7 +74,7 @@ jobs:
           2>&1 | tee ./docker-log.log
 
       - name: Investigate File Structure on Failure
-        if: ${{ failure() }}
+        if: ${{ always() }}
         run: |
           pwd
           echo ''
@@ -129,7 +129,7 @@ jobs:
               printf "Found %s in %s\n" "$1" "./docker-log.log"
             fi
           }
-          
+
           check_for_config "Setting breakpad minidump AppID = 346110"
 
       - name: Test - Server Configuration Applied
