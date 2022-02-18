@@ -55,7 +55,7 @@ jobs:
       - name: Test Run the Docker Image
         if: ${{ success() }}
         continue-on-error: true
-        timeout-minutes: 20
+        timeout-minutes: 22
         run: |
           docker run \
           --rm \
@@ -63,10 +63,12 @@ jobs:
           --user ${{ steps.variables.outputs.userid }}:${{ steps.variables.outputs.groupid }} \
           --mount type=bind,source="$(pwd)/ArkSE_Install",target=/home/steam/ArkSE_Install \
           --mount type=bind,source="$(pwd)/ArkSE_Config",target=/home/steam/ArkSE_Config \
+          --ulimit nofile=1000000:1000000 \
           --env=GAME_PORT="25496" \
+          --env=MAP_NAME="TheCenter" \
           --env=MAX_PLAYERS="14" \
-          --env=MAX_RAM="6144m" \
           --env=SERVER_NAME="GitHubActionTest" \
+          --env=ADMIN_PASSWORD="github_action_test_admin_password" \
           --env=SERVER_PASSWORD="github_action_test_password" \
           renegademaster/ark-se-dedicated-server:${{ steps.variables.outputs.datetime }} \
           2>&1 | tee ./docker-log.log
@@ -98,9 +100,8 @@ jobs:
         with:
           name: server-configs
           path: |
-            ArkSE_Config/Server/GitHubActionTest.ini
-            ArkSE_Config/Server/GitHubActionTest_SandboxVars.lua
-            ArkSE_Install/ProjectZomboid64.json
+            ArkSE_Config/Config/LinuxServer/GameUserSettings.ini
+            ArkSE_Config/Config/LinuxServer/Game.ini
 
   test:
     name: Test Server
@@ -129,49 +130,31 @@ jobs:
             fi
           }
           
-          check_for_config "LuaNet: Initialization \[DONE\]"
-
-      - name: Test - Sed Command Completed
-        run: |
-          check_for_config() {
-            if ! grep -q -iE "$1" "./docker-log.log"; then
-              printf "Could not find %s in %s\n" "$1" "./docker-log.log"
-            else
-              printf "Found %s in %s\n" "$1" "./docker-log.log"
-              exit 1
-            fi
-          }
-          
-          check_for_config "sed: can't read"
-
-      - name: Test - Server JVM Configuration Applied
-        run: |
-          check_for_config() {
-            if ! grep -q -iE "$1" "./ArkSE_Install/ProjectZomboid64.json"; then
-              printf "Could not find %s in %s\n" "$1" "./ArkSE_Install/ProjectZomboid64.json"
-              exit 1
-            else
-              printf "Found %s in %s\n" "$1" "./ArkSE_Install/ProjectZomboid64.json"
-            fi
-          }
-          
-          check_for_config "\-Xmx6144m"
+          check_for_config "Setting breakpad minidump AppID = 346110"
 
       - name: Test - Server Configuration Applied
         run: |
-          check_for_config() {
-            if ! grep -q -iE "$1" "./ArkSE_Config/Server/GitHubActionTest.ini"; then
-              printf "Could not find %s in %s\n" "$1" "./ArkSE_Config/Server/GitHubActionTest.ini"
-              exit 1
-            else
-              printf "Found %s in %s\n" "$1" "./ArkSE_Config/Server/GitHubActionTest.ini"
-            fi
-          }
+          set -x
 
-          check_for_config "SaveWorldEveryMinutes=16"
-          check_for_config "SteamPort1=25496"
-          check_for_config "MaxPlayers=14"
-          check_for_config "PauseEmpty=true"
-          check_for_config "Open=false"
-          check_for_config "PublicName=GitHubActionTest"
-          check_for_config "Password=github_action_test_password"
+          # Check that correct Map was loaded
+          [[ -f "$(pwd)/ArkSE_Config/SavedArks/TheCenter.ark" ]]
+
+          # Check for Max Players
+          [[ "$("$(pwd)/src/edit_server_config.py" \
+            "$(pwd)/ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "/Script/Engine.GameSession" \
+            "MaxPlayers")" == "14" ]]
+
+          # Check for Server Admin Password
+          [[ "$("$(pwd)/src/edit_server_config.py" \
+            "$(pwd)/ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "ServerSettings" \
+            "ServerAdminPassword")" == "github_action_test_admin_password" ]]
+
+          # Check for Server Password
+          [[ "$("$(pwd)/src/edit_server_config.py" \
+            "$(pwd)/ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "ServerSettings" \
+            "ServerPassword")" == "github_action_test_password" ]]
+
+          # Check for Server Name
+          [[ "$("$(pwd)/src/edit_server_config.py" \
+            "$(pwd)/ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "SessionSettings" \
+            "SessionName")" == "GitHubActionTest" ]]

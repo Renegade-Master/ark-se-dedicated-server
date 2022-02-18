@@ -43,14 +43,11 @@ recommended.
 | Argument          | Description                                                            | Values            | Default     |
 |-------------------|------------------------------------------------------------------------|-------------------|-------------|
 | `ADMIN_PASSWORD`  | Server Admin account password                                          | [a-zA-Z0-9]+      | changeme    |
-| `BIND_IP`         | IP to bind the server to                                               | 0.0.0.0           | 0.0.0.0     |
 | `GAME_PORT`       | Port for sending game data to clients                                  | 1000 - 65535      | 7777        |
 | `GAME_PORT_2`     | Additionally required Port for sending game data to clients            | 1000 - 65535      | 7778        |
 | `GAME_VERSION`    | Game version to serve                                                  | [a-zA-Z0-9_]+     | `public`    |
+| `MAP_NAME`        | Set the map to be loaded                                               | [a-zA-Z]+         | TheIsland   |
 | `MAX_PLAYERS`     | Maximum players allowed in the Server                                  | [0-9]+            | 16          |
-| `MAX_RAM`         | Maximum amount of RAM to be used                                       | ([0-9]+)m         | 6144m       |
-| `MOD_NAMES`       | Workshop Mod Names (e.g. ClaimNonResidential;MoreDescriptionForTraits) | mod1;mod2;mod     |             |
-| `PUBLIC_SERVER`   | Is the server displayed Publicly                                       | (true&vert;false) | true        |
 | `QUERY_PORT`      | Port for other players to connect to                                   | 1000 - 65535      | 27015       |
 | `SERVER_NAME`     | Publicly visible Server Name                                           | [a-zA-Z0-9]+      | ArkSeServer |
 | `SERVER_PASSWORD` | Server password                                                        | [a-zA-Z0-9]+      |             |
@@ -86,16 +83,15 @@ The following are instructions for running the server using the Docker image.
        --mount type=bind,source="$(pwd)/ArkSE_Install",target=/home/steam/ArkSE_Install \
        --mount type=bind,source="$(pwd)/ArkSE_Config",target=/home/steam/ArkSE_Install/ShooterGame/Saved \
        --publish 27015:27015/udp --publish 7777:7777/udp --publish 7778:7778/udp \
+       --ulimit nofile=1000000:1000000 \
        --name ark-se-server \
        --user=$(id -u):$(id -g) \
        [--env=ADMIN_PASSWORD=<value>] \
-       [--env=BIND_IP=<value>] \
        [--env=GAME_PORT=<value>] \
        [--env=GAME_PORT_2=<value>] \
        [--env=GAME_VERSION=<value>] \
+       [--env=MAP_NAME=<value>] \
        [--env=MAX_PLAYERS=<value>] \
-       [--env=MAX_RAM=<value>] \
-       [--env=MOD_NAMES=<value>] \
        [--env=QUERY_PORT=<value>] \
        [--env=SERVER_NAME=<value>] \
        [--env=SERVER_PASSWORD=<value>] \
