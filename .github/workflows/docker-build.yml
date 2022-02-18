@@ -62,7 +62,7 @@ jobs:
           --name ark-se-server \
           --user ${{ steps.variables.outputs.userid }}:${{ steps.variables.outputs.groupid }} \
           --mount type=bind,source="$(pwd)/ArkSE_Install",target=/home/steam/ArkSE_Install \
-          --mount type=bind,source="$(pwd)/ArkSE_Config",target=/home/steam/ArkSE_Config \
+          --mount type=bind,source="$(pwd)/ArkSE_Config",target=/home/steam/ArkSE_Install/ShooterGame/Saved \
           --ulimit nofile=1000000:1000000 \
           --env=GAME_PORT="25496" \
           --env=MAP_NAME="TheCenter" \
