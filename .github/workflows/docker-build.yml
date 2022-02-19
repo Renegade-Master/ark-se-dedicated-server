@@ -180,21 +180,21 @@ jobs:
           set -x
 
           # Check for Max Players
-          [[ "$("$(pwd)/src/edit_server_config.py" \
-            "$(pwd)/ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "/Script/Engine.GameSession" \
+          [[ "$("./src/edit_server_config.py" \
+            "./ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "/Script/Engine.GameSession" \
             "MaxPlayers")" == "14" ]]
 
           # Check for Server Admin Password
-          [[ "$("$(pwd)/src/edit_server_config.py" \
-            "$(pwd)/ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "ServerSettings" \
+          [[ "$("./src/edit_server_config.py" \
+            "./ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "ServerSettings" \
             "ServerAdminPassword")" == "github_action_test_admin_password" ]]
 
           # Check for Server Password
-          [[ "$("$(pwd)/src/edit_server_config.py" \
-            "$(pwd)/ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "ServerSettings" \
+          [[ "$("./src/edit_server_config.py" \
+            "./ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "ServerSettings" \
             "ServerPassword")" == "github_action_test_password" ]]
 
           # Check for Server Name
-          [[ "$("$(pwd)/src/edit_server_config.py" \
-            "$(pwd)/ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "SessionSettings" \
+          [[ "$("./src/edit_server_config.py" \
+            "./ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "SessionSettings" \
             "SessionName")" == "GitHubActionTest" ]]
