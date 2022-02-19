@@ -37,8 +37,9 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v5
         with:
-          root-reserve-mb: 1024
-          swap-size-mb: 1024
+          root-reserve-mb: 24576
+          temp-reserve-mb: 8192
+          swap-size-mb: 4096
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
@@ -73,7 +74,7 @@ jobs:
       - name: Test Run the Docker Image
         if: ${{ success() }}
         continue-on-error: true
-        timeout-minutes: 25
+        timeout-minutes: 30
         run: |
           docker run \
           --rm \
@@ -91,7 +92,7 @@ jobs:
           renegademaster/ark-se-dedicated-server:${{ steps.variables.outputs.datetime }} \
           2>&1 | tee ./docker-log.log
 
-      - name: Investigate File Structure on Failure
+      - name: Investigate File Structure and Diskspace on Failure
         if: ${{ always() }}
         run: |
           pwd
@@ -103,6 +104,14 @@ jobs:
           tree -aL 4 ./ArkSE_Install/
           echo ''
           tree -aL 4 ./ArkSE_Config/
+          echo ''
+          echo "Memory and swap:"
+          free
+          echo ''
+          swapon --show
+          echo ''          
+          echo "Available storage:"
+          df -h
 
       - name: Upload Docker Logs
         if: ${{ always() }}

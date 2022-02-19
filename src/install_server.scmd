@@ -8,7 +8,6 @@
 // Set timeouts to large values to prevent early quitting during download
 @csecCSRequestProcessorTimeOut 1800
 @DepotBuilderProgressTimeout 1800
-@nCSJob404ResponseLimit 1800
 csecManifestDownloadTimeout 1800
 DepotDownloadProgressTimeout 1800
 p2p_unusedtimeout 1800
