@@ -76,7 +76,6 @@ update_folder_permissions() {
     printf "\n### Updating Folder Permissions...\n"
 
     chown -R "$(id -u):$(id -g)" "$BASE_GAME_DIR"
-    chown -R "$(id -u):$(id -g)" "$CONFIG_DIR"
 
     printf "\n### Folder Permissions updated.\n"
 }
