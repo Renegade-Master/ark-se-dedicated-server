@@ -2,7 +2,7 @@
 
 #
 #  ARK: Survival Evolved Dedicated Server using SteamCMD Docker Image.
-#  Copyright (C) 2021-2022 Renegade-Master [renegade.master.dev@protonmail.com]
+#  Copyright (C) 2022-2022 Renegade-Master [renegade.master.dev@protonmail.com]
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ set_variables() {
     printf "\n### Setting variables...\n"
 
     TIMEOUT="60"
-    MAX_RETRIES="5"
+    MAX_RETRIES="3"
     STEAM_INSTALL_FILE="/home/steam/install_server.scmd"
     BASE_GAME_DIR="/home/steam/ArkSE_Install"
     CONFIG_DIR="/home/steam/ArkSE_Install/ShooterGame/Saved"
