@@ -48,15 +48,7 @@ test_first_run() {
 update_server() {
     printf "\n### Updating ARK Survival Evolved Server...\n"
 
-    install_success=1
-    retries=0
-
-    while [[  $install_success -ne 0 ]] && [[ $retries -lt 3 ]]; do
-        printf "\n### Attempt %s to update ARK Survival Evolved Server...\n" "$retries"
-        "$STEAM_PATH" +runscript "$STEAM_INSTALL_FILE"
-        install_success=$?
-        retries=$((retries+1))
-    done
+    "$STEAM_PATH" +runscript "$STEAM_INSTALL_FILE"
 
     printf "\n### ARK Survival Evolved Server updated.\n"
 }

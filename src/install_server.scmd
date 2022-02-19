@@ -8,6 +8,9 @@
 // Do not shutdown on a failed command
 @ShutdownOnFailedCommand 0
 
+// Set the Builder timeout in seconds
+@DepotBuilderProgressTimeout 1200
+
 //No password as this is unattended
 @NoPromptForPassword 1
 
