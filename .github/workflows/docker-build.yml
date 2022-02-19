@@ -37,9 +37,9 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@v5
         with:
-          root-reserve-mb: 24576
-          temp-reserve-mb: 8192
-          swap-size-mb: 4096
+          root-reserve-mb: 1024
+          temp-reserve-mb: 1024
+          swap-size-mb: 1024
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
@@ -59,7 +59,7 @@ jobs:
           chmod +x src/run_server.sh
 
       - name: Make Directories
-        run: mkdir ArkSE_Install ArkSE_Config
+        run: mkdir -p ArkSE_Install/ShooterGame/Saved ArkSE_Config
 
       - name: Build the Docker Image
         if: ${{ success() }}
