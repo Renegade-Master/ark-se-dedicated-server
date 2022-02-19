@@ -93,7 +93,8 @@ jobs:
           2>&1 | tee ./docker-log.log
 
       - name: Investigate File Structure and Diskspace on Failure
-        if: ${{ failure() }}
+#        if: ${{ failure() }}
+        if: ${{ always() }}
         run: |
           pwd
           echo ''
