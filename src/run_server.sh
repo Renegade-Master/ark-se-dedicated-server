@@ -18,7 +18,6 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
 #######################################################################
 #   Author: Renegade-Master
 #   Description: Install, update, and start an ARK: Survival Evolved
@@ -70,9 +69,9 @@ update_server() {
     install_success=1
     retries=0
 
-    # Try at most 3 times to install the server
-    while [[ "$install_success" -ne 0 ]] && [[ "$retries" -lt 3 ]]; do
-        printf "\n### Attempt %s to update ARK: Survival Evolved Server...\n" "$retries"
+    # Try at most MAX_RETRIES times to install the server
+    while [[ "$install_success" -ne 0 ]] && [[ "$retries" -lt "$MAX_RETRIES" ]]; do
+        printf "\n### Attempt %s to update ARK: Survival Evolved Server...\n" "$((retries + 1))"
 
         # Redirect subshell output to STDOUT using a File Descriptor
         exec 3>&1
@@ -124,6 +123,7 @@ set_variables() {
     printf "\n### Setting variables...\n"
 
     TIMEOUT="60"
+    MAX_RETRIES="5"
     STEAM_INSTALL_FILE="/home/steam/install_server.scmd"
     BASE_GAME_DIR="/home/steam/ArkSE_Install"
     CONFIG_DIR="/home/steam/ArkSE_Install/ShooterGame/Saved"

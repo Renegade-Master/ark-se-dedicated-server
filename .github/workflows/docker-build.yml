@@ -1,3 +1,4 @@
+#
 #   ARK: Survival Evolved Dedicated Server using SteamCMD Docker Image.
 #   Copyright (C) 2021-2022 Renegade-Master [renegade.master.dev@protonmail.com]
 #
@@ -13,6 +14,7 @@
 #
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
 
 name: Build and Test Server Image
 
