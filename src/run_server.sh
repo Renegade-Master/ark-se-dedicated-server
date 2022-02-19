@@ -1,9 +1,28 @@
 #!/usr/bin/env bash
+
+#
+#  ARK: Survival Evolved Dedicated Server using SteamCMD Docker Image.
+#  Copyright (C) 2021-2022 Renegade-Master [renegade.master.dev@protonmail.com]
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+
 #######################################################################
 #   Author: Renegade-Master
 #   Description: Install, update, and start an ARK: Survival Evolved
 #     Dedicated Server instance.
-#   License: GNU General Public License v3.0 (see LICENSE)
 #######################################################################
 
 # Set to `-x` for Debug logging
@@ -71,6 +90,12 @@ update_server() {
             retries=$((retries + 1))
         fi
     done
+
+    # Exit is the installation was unsuccessful
+    if [[ "$install_success" -ne 0 ]]; then
+        printf "\n### Failed to update ARK: Survival Evolved Server.\n"
+        exit 1
+    fi
 
     printf "\n### ARK Survival Evolved Server updated.\n"
 }
