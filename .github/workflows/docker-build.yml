@@ -136,6 +136,9 @@ jobs:
     needs:
       - build-and-run
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
       - name: Download Docker Logs
         uses: actions/download-artifact@v2
         with:
