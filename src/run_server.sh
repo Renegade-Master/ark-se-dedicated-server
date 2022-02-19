@@ -61,12 +61,14 @@ update_server() {
         # Attempt to update the server
         steam_output=$("$STEAM_PATH" +runscript "$STEAM_INSTALL_FILE" | tee /dev/fd/3)
 
-        # Close the file descriptor
+        # Close the File Descriptor
         exec 3>&-
 
         # Check if the update was successful
-        if grep -q "Success! App '376030' fully installed." "$steam_output"; then
+        if [[ $steam_output == *"Success! App '376030' fully installed."* ]]; then
             install_success=0
+        else
+            retries=$((retries + 1))
         fi
     done
 
