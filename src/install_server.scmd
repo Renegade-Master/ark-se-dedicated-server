@@ -11,7 +11,7 @@
 // Set the Builder timeout in seconds
 @DepotBuilderProgressTimeout 1200
 
-//No password as this is unattended
+// No password as this is unattended
 @NoPromptForPassword 1
 
 // Set the game installation directory

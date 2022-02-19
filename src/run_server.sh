@@ -48,7 +48,27 @@ test_first_run() {
 update_server() {
     printf "\n### Updating ARK Survival Evolved Server...\n"
 
-    "$STEAM_PATH" +runscript "$STEAM_INSTALL_FILE"
+    install_success=1
+    retries=0
+
+    # Try at most 3 times to install the server
+    while [[ "$install_success" -ne 0 ]] && [[ "$retries" -lt 3 ]]; do
+        printf "\n### Attempt %s to update ARK: Survival Evolved Server...\n" "$retries"
+
+        # Redirect subshell output to STDOUT using a File Descriptor
+        exec 3>&1
+
+        # Attempt to update the server
+        steam_output=$("$STEAM_PATH" +runscript "$STEAM_INSTALL_FILE" | tee /dev/fd/3)
+
+        # Close the file descriptor
+        exec 3>&-
+
+        # Check if the update was successful
+        if grep -q "Success! App '376030' fully installed." "$steam_output"; then
+            install_success=0
+        fi
+    done
 
     printf "\n### ARK Survival Evolved Server updated.\n"
 }
