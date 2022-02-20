@@ -93,8 +93,7 @@ jobs:
           2>&1 | tee ./docker-log.log
 
       - name: Investigate File Structure and Diskspace on Failure
-#        if: ${{ failure() }}
-        if: ${{ always() }}
+        if: ${{ failure() }}
         run: |
           pwd
           echo ''
@@ -150,24 +149,6 @@ jobs:
         with:
           name: server-configs
 
-      - name: Investigate File Structure and Diskspace on Failure
-#        if: ${{ failure() }}
-        if: ${{ always() }}
-        run: |
-          pwd
-          echo ''
-          ls -lAuhFn ./
-          echo ''
-          tree -aL 4 ./
-          echo ''
-          echo "Memory and swap:"
-          free
-          echo ''
-          swapon --show
-          echo ''
-          echo "Available storage:"
-          df -h
-
       - name: Test - Server Downloaded
         run: |
           check_for_config() {
@@ -196,24 +177,48 @@ jobs:
 
       - name: Test - Server Configuration Applied
         run: |
-          set -x
-
+          test_failed=0
+          
           # Check for Max Players
-          [[ "$("./src/edit_server_config.py" \
-            "./GameUserSettings.ini" "/Script/Engine.GameSession" \
-            "MaxPlayers")" == "14" ]]
+          expected="14"
+          actual="$("./src/edit_server_config.py" "./GameUserSettings.ini" "/Script/Engine.GameSession" "MaxPlayers")"
+          if [[ "$actual" == "$expected" ]]; then
+            printf "MaxPlayers is %s\n" "$actual"
+          else
+            printf "E: Test failed.  Expected: [%s] Actual: [%s]" "$expected" "$actual"
+            test_failed=1
+          fi
 
           # Check for Server Admin Password
-          [[ "$("./src/edit_server_config.py" \
-            "./GameUserSettings.ini" "ServerSettings" \
-            "ServerAdminPassword")" == "github_action_test_admin_password" ]]
+          expected="github_action_test_admin_password"
+          actual="$("./src/edit_server_config.py" "./GameUserSettings.ini" "ServerSettings" "ServerAdminPassword")"
+          if [[ "$actual" == "$expected" ]]; then
+            printf "ServerAdminPassword is [%s]\n" "$actual"
+          else
+            printf "E: Test failed.  Expected: [%s] Actual: [%s]" "$expected" "$actual"
+            test_failed=1
+          fi
 
           # Check for Server Password
-          [[ "$("./src/edit_server_config.py" \
-            "./GameUserSettings.ini" "ServerSettings" \
-            "ServerPassword")" == "github_action_test_password" ]]
+          expected="github_action_test_password"
+          actual="$("./src/edit_server_config.py" "./GameUserSettings.ini" "ServerSettings" "ServerPassword")"
+          if [[ "$actual" == "$expected" ]]; then
+            printf "ServerPassword is [%s]\n" "$actual"
+          else
+            printf "E: Test failed.  Expected: [%s] Actual: [%s]" "$expected" "$actual"
+            test_failed=1
+          fi
 
           # Check for Server Name
-          [[ "$("./src/edit_server_config.py" \
-            "./GameUserSettings.ini" "SessionSettings" \
-            "SessionName")" == "GitHubActionTest" ]]
+          expected="GitHubActionTest"
+          actual="$("./src/edit_server_config.py" "./GameUserSettings.ini" "SessionSettings" "SessionName")"
+          if [[ "$actual" == "$expected" ]]; then
+            printf "SessionName is [%s]\n" "$actual"
+          else
+            printf "E: Test failed.  Expected: [%s] Actual: [%s]" "$expected" "$actual"
+            test_failed=1
+          fi
+          
+          if [[ "$test_failed" == "1" ]]; then
+            exit 1
+          fi
