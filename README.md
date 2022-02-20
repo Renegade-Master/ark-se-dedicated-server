@@ -77,7 +77,7 @@ The following are instructions for running the server using the Docker image.
    `published` ports below must also be changed*
 
    ```shell
-   mkdir ArkSE_Install ArkSE_Config
+   mkdir -p ArkSE_Install/ShooterGame/Saved ArkSE_Config
 
    docker run --detach \
        --mount type=bind,source="$(pwd)/ArkSE_Install",target=/home/steam/ArkSE_Install \
@@ -126,7 +126,7 @@ The following are instructions for running the server using Docker-Compose.
 4. Run the following commands:
 
    ```shell
-   mkdir ArkSE_Install ArkSE_Config
+   mkdir -p ArkSE_Install/ShooterGame/Saved ArkSE_Config
 
    docker-compose up --build --detach
    ```
