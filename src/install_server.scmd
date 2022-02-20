@@ -1,22 +1,29 @@
 ///////////////////////////////////////////////////////////////////////
 // Author: Renegade-Master
-// Description: SteamCMD installation script for Generic SteamCMD
+// Description: SteamCMD installation script for ARK: Survival Evolved
 //   Dedicated Server
 // License: GNU General Public License v3.0 (see LICENSE)
 ///////////////////////////////////////////////////////////////////////
 
+// Set timeouts to large values to prevent early quitting during download
+@csecCSRequestProcessorTimeOut 1800
+@DepotBuilderProgressTimeout 1800
+csecManifestDownloadTimeout 1800
+DepotDownloadProgressTimeout 1800
+p2p_unusedtimeout 1800
+
 // Do not shutdown on a failed command
 @ShutdownOnFailedCommand 0
 
-//No password as this is unattended
+// No password as this is unattended
 @NoPromptForPassword 1
 
 // Set the game installation directory
-force_install_dir /home/steam/REPLACE_ME_INSTALL
+force_install_dir /home/steam/ArkSE_Install
 
 login anonymous
 
-// Install/Update the Generic SteamCMD Dedicated Server
-app_update 000000 -beta GAME_VERSION validate
+// Install/Update the ARK Survival Evolved Dedicated Server
+app_update 376030 -beta GAME_VERSION validate
 
 quit

@@ -1,3 +1,21 @@
+#
+#   ARK: Survival Evolved Dedicated Server using SteamCMD Docker Image.
+#   Copyright (C) 2022-2022 Renegade-Master [renegade.master.dev@protonmail.com]
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
 name: Build and Test Server Image
 
 on:
@@ -16,6 +34,15 @@ jobs:
     name: Build and Run Server
     runs-on: ubuntu-latest
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v5
+        with:
+          root-reserve-mb: 1024
+          temp-reserve-mb: 1024
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
       - name: Checkout Repository
         uses: actions/checkout@v2
 
@@ -32,14 +59,14 @@ jobs:
           chmod +x src/run_server.sh
 
       - name: Make Directories
-        run: mkdir REPLACE_ME_CONFIG REPLACE_ME_INSTALL
+        run: mkdir -p ArkSE_Install/ShooterGame/Saved ArkSE_Config
 
       - name: Build the Docker Image
         if: ${{ success() }}
         run: |
           docker build \
-          --file docker/steamcmd-dedicated-server-template.Dockerfile \
-          --tag renegademaster/steamcmd-dedicated-server-template:${{ steps.variables.outputs.datetime }} \
+          --file docker/ark-se-dedicated-server.Dockerfile \
+          --tag renegademaster/ark-se-dedicated-server:${{ steps.variables.outputs.datetime }} \
           --build-arg USER_ID=${{ steps.variables.outputs.userid }} \
           --build-arg GROUP_ID=${{ steps.variables.outputs.groupid }} \
           .
@@ -47,35 +74,44 @@ jobs:
       - name: Test Run the Docker Image
         if: ${{ success() }}
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 20
         run: |
           docker run \
           --rm \
-          --name dedicated-server \
+          --name ark-se-server \
           --user ${{ steps.variables.outputs.userid }}:${{ steps.variables.outputs.groupid }} \
-          --mount type=bind,source="$(pwd)/REPLACE_ME_INSTALL",target=/home/steam/REPLACE_ME_INSTALL \
-          --mount type=bind,source="$(pwd)/REPLACE_ME_CONFIG",target=/home/steam/REPLACE_ME_CONFIG \
+          --mount type=bind,source="$(pwd)/ArkSE_Install",target=/home/steam/ArkSE_Install \
+          --mount type=bind,source="$(pwd)/ArkSE_Config",target=/home/steam/ArkSE_Install/ShooterGame/Saved \
+          --ulimit nofile=1000000:1000000 \
           --env=GAME_PORT="25496" \
+          --env=MAP_NAME="TheCenter" \
           --env=MAX_PLAYERS="14" \
-          --env=MAX_RAM="6144m" \
-          --env=PUBLIC_SERVER="false" \
           --env=SERVER_NAME="GitHubActionTest" \
+          --env=ADMIN_PASSWORD="github_action_test_admin_password" \
           --env=SERVER_PASSWORD="github_action_test_password" \
-          steamcmd-dedicated-server-template:${{ steps.variables.outputs.datetime }} \
+          renegademaster/ark-se-dedicated-server:${{ steps.variables.outputs.datetime }} \
           2>&1 | tee ./docker-log.log
 
-      - name: Investigate File Structure on Failure
+      - name: Investigate File Structure and Diskspace on Failure
         if: ${{ failure() }}
         run: |
           pwd
           echo ''
-          ls -lAuhFn ./REPLACE_ME_INSTALL/
+          ls -lAuhFn ./ArkSE_Install/
           echo ''
-          ls -lAuhFn ./REPLACE_ME_CONFIG/
+          ls -lAuhFn ./ArkSE_Config/
           echo ''
-          tree -aL 4 ./REPLACE_ME_INSTALL/
+          tree -aL 4 ./ArkSE_Install/
           echo ''
-          tree -aL 4 ./REPLACE_ME_CONFIG/
+          tree -aL 4 ./ArkSE_Config/
+          echo ''
+          echo "Memory and swap:"
+          free
+          echo ''
+          swapon --show
+          echo ''
+          echo "Available storage:"
+          df -h
 
       - name: Upload Docker Logs
         if: ${{ always() }}
@@ -91,9 +127,8 @@ jobs:
         with:
           name: server-configs
           path: |
-            REPLACE_ME_CONFIG/Server/GitHubActionTest.ini
-            REPLACE_ME_CONFIG/Server/GitHubActionTest_SandboxVars.lua
-            REPLACE_ME_INSTALL/ProjectZomboid64.json
+            ArkSE_Config/Config/LinuxServer/GameUserSettings.ini
+            ArkSE_Config/Config/LinuxServer/Game.ini
 
   test:
     name: Test Server
@@ -101,6 +136,9 @@ jobs:
     needs:
       - build-and-run
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
       - name: Download Docker Logs
         uses: actions/download-artifact@v2
         with:
@@ -110,6 +148,19 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: server-configs
+
+      - name: Test - Server Downloaded
+        run: |
+          check_for_config() {
+            if ! grep -q -iE "$1" "./docker-log.log"; then
+              printf "Could not find %s in %s\n" "$1" "./docker-log.log"
+              exit 1
+            else
+              printf "Found %s in %s\n" "$1" "./docker-log.log"
+            fi
+          }
+
+          check_for_config "Success! App '376030' fully installed."
 
       - name: Test - Server Started
         run: |
@@ -121,50 +172,53 @@ jobs:
               printf "Found %s in %s\n" "$1" "./docker-log.log"
             fi
           }
-          
-          check_for_config "LuaNet: Initialization \[DONE\]"
 
-      - name: Test - Sed Command Completed
-        run: |
-          check_for_config() {
-            if ! grep -q -iE "$1" "./docker-log.log"; then
-              printf "Could not find %s in %s\n" "$1" "./docker-log.log"
-            else
-              printf "Found %s in %s\n" "$1" "./docker-log.log"
-              exit 1
-            fi
-          }
-          
-          check_for_config "sed: can't read"
-
-      - name: Test - Server JVM Configuration Applied
-        run: |
-          check_for_config() {
-            if ! grep -q -iE "$1" "./REPLACE_ME_INSTALL/ProjectZomboid64.json"; then
-              printf "Could not find %s in %s\n" "$1" "./REPLACE_ME_INSTALL/ProjectZomboid64.json"
-              exit 1
-            else
-              printf "Found %s in %s\n" "$1" "./REPLACE_ME_INSTALL/ProjectZomboid64.json"
-            fi
-          }
-          
-          check_for_config "\-Xmx6144m"
+          check_for_config "Setting breakpad minidump AppID = 346110"
 
       - name: Test - Server Configuration Applied
         run: |
-          check_for_config() {
-            if ! grep -q -iE "$1" "./REPLACE_ME_CONFIG/Server/GitHubActionTest.ini"; then
-              printf "Could not find %s in %s\n" "$1" "./REPLACE_ME_CONFIG/Server/GitHubActionTest.ini"
-              exit 1
-            else
-              printf "Found %s in %s\n" "$1" "./REPLACE_ME_CONFIG/Server/GitHubActionTest.ini"
-            fi
-          }
+          test_failed=0
+          
+          # Check for Max Players
+          expected="14"
+          actual="$("./src/edit_server_config.py" "./GameUserSettings.ini" "/Script/Engine.GameSession" "MaxPlayers")"
+          if [[ "$actual" == "$expected" ]]; then
+            printf "MaxPlayers is %s\n" "$actual"
+          else
+            printf "E: Test failed.  Expected: [%s] Actual: [%s]" "$expected" "$actual"
+            test_failed=1
+          fi
 
-          check_for_config "SaveWorldEveryMinutes=16"
-          check_for_config "SteamPort1=25496"
-          check_for_config "MaxPlayers=14"
-          check_for_config "PauseEmpty=true"
-          check_for_config "Open=false"
-          check_for_config "PublicName=GitHubActionTest"
-          check_for_config "Password=github_action_test_password"
+          # Check for Server Admin Password
+          expected="github_action_test_admin_password"
+          actual="$("./src/edit_server_config.py" "./GameUserSettings.ini" "ServerSettings" "ServerAdminPassword")"
+          if [[ "$actual" == "$expected" ]]; then
+            printf "ServerAdminPassword is [%s]\n" "$actual"
+          else
+            printf "E: Test failed.  Expected: [%s] Actual: [%s]" "$expected" "$actual"
+            test_failed=1
+          fi
+
+          # Check for Server Password
+          expected="github_action_test_password"
+          actual="$("./src/edit_server_config.py" "./GameUserSettings.ini" "ServerSettings" "ServerPassword")"
+          if [[ "$actual" == "$expected" ]]; then
+            printf "ServerPassword is [%s]\n" "$actual"
+          else
+            printf "E: Test failed.  Expected: [%s] Actual: [%s]" "$expected" "$actual"
+            test_failed=1
+          fi
+
+          # Check for Server Name
+          expected="GitHubActionTest"
+          actual="$("./src/edit_server_config.py" "./GameUserSettings.ini" "SessionSettings" "SessionName")"
+          if [[ "$actual" == "$expected" ]]; then
+            printf "SessionName is [%s]\n" "$actual"
+          else
+            printf "E: Test failed.  Expected: [%s] Actual: [%s]" "$expected" "$actual"
+            test_failed=1
+          fi
+          
+          if [[ "$test_failed" == "1" ]]; then
+            exit 1
+          fi
