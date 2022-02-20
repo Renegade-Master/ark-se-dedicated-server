@@ -206,20 +206,20 @@ jobs:
 
           # Check for Max Players
           [[ "$("./src/edit_server_config.py" \
-            "./ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "/Script/Engine.GameSession" \
+            "./GameUserSettings.ini" "/Script/Engine.GameSession" \
             "MaxPlayers")" == "14" ]]
 
           # Check for Server Admin Password
           [[ "$("./src/edit_server_config.py" \
-            "./ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "ServerSettings" \
+            "./GameUserSettings.ini" "ServerSettings" \
             "ServerAdminPassword")" == "github_action_test_admin_password" ]]
 
           # Check for Server Password
           [[ "$("./src/edit_server_config.py" \
-            "./ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "ServerSettings" \
+            "./GameUserSettings.ini" "ServerSettings" \
             "ServerPassword")" == "github_action_test_password" ]]
 
           # Check for Server Name
           [[ "$("./src/edit_server_config.py" \
-            "./ArkSE_Config/Config/LinuxServer/GameUserSettings.ini" "SessionSettings" \
+            "./GameUserSettings.ini" "SessionSettings" \
             "SessionName")" == "GitHubActionTest" ]]
