@@ -158,13 +158,7 @@ jobs:
           echo ''
           ls -lAuhFn ./
           echo ''
-          ls -lAuhFn ./ArkSE_Install/
-          echo ''
-          ls -lAuhFn ./ArkSE_Config/
-          echo ''
-          tree -aL 4 ./ArkSE_Install/
-          echo ''
-          tree -aL 4 ./ArkSE_Config/
+          tree -aL 4 ./
           echo ''
           echo "Memory and swap:"
           free
