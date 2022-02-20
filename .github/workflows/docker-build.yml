@@ -110,7 +110,7 @@ jobs:
           free
           echo ''
           swapon --show
-          echo ''          
+          echo ''
           echo "Available storage:"
           df -h
 
@@ -149,6 +149,28 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: server-configs
+
+      - name: Investigate File Structure and Diskspace on Failure
+#        if: ${{ failure() }}
+        if: ${{ always() }}
+        run: |
+          pwd
+          echo ''
+          ls -lAuhFn ./ArkSE_Install/
+          echo ''
+          ls -lAuhFn ./ArkSE_Config/
+          echo ''
+          tree -aL 4 ./ArkSE_Install/
+          echo ''
+          tree -aL 4 ./ArkSE_Config/
+          echo ''
+          echo "Memory and swap:"
+          free
+          echo ''
+          swapon --show
+          echo ''
+          echo "Available storage:"
+          df -h
 
       - name: Test - Server Downloaded
         run: |
