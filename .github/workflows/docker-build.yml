@@ -156,6 +156,8 @@ jobs:
         run: |
           pwd
           echo ''
+          ls -lAuhFn ./
+          echo ''
           ls -lAuhFn ./ArkSE_Install/
           echo ''
           ls -lAuhFn ./ArkSE_Config/
